@@ -113,7 +113,7 @@ jobs:
         run: docker run -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_HOST_AUTH_METHOD=trust -d postgres:14
 
       - name: Start MySQL
-        if: matrix.database == 'mysql'
+        if: matrix.database == 'mysqli'
         run: docker run -p 3306:3306 -e MYSQL_USER=root -e MYSQL_ALLOW_EMPTY_PASSWORD=true -d mysql:8.0
 
       - name: Check out repository code

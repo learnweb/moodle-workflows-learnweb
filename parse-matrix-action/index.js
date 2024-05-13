@@ -11,7 +11,7 @@ try {
     } = JSON.parse(core.getInput('input'));
 
     mainDb ??= "pgsql";
-    dbs ??= ["pgsql", "mariadb", "mysql", "mssql"];
+    dbs ??= ["pgsql", "mariadb", "mysqli"];
 
     core.setOutput("moodle_plugin_ci", moodlePluginCi);
 
