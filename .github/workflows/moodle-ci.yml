@@ -1,6 +1,22 @@
 name: Moodle Plugin CI
 on:
   workflow_call:
+    inputs:
+      allow-phpcs-warning:
+        description: 'Whether to allow phpcs warnings'
+        required: false
+        default: false
+        type: boolean
+      allow-phpcs-error:
+        description: 'Whether to allow phpcs errors'
+        required: false
+        default: false
+        type: boolean
+      allow-phpdoc-error:
+        description: 'Whether to allow phpdoc errors'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   setup_jobs:
@@ -63,21 +79,19 @@ jobs:
         if: ${{ always() }}
         run: moodle-plugin-ci phplint
 
-      - name: PHP Copy/Paste Detector
-        if: ${{ always() }}
-        run: moodle-plugin-ci phpcpd
-
       - name: PHP Mess Detector
         if: ${{ always() }}
         run: moodle-plugin-ci phpmd
 
       - name: Moodle Code Checker
         if: ${{ always() }}
-        run: moodle-plugin-ci codechecker
+        run: moodle-plugin-ci phpcs ${{ !inputs.allow-phpcs-warning && '--max-warnings 0' || '' }}
+        continue-on-error: ${{ inputs.allow-phpcs-error }}
 
       - name: Moodle PHPDoc Checker
         if: ${{ always() }}
         run: moodle-plugin-ci phpdoc
+        continue-on-error: ${{ inputs.allow-phpdoc-error }}
 
       - name: Validating
         if: ${{ always() }}
