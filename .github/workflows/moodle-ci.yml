@@ -25,13 +25,24 @@ jobs:
       static_matrix: ${{ steps.calc-matrix.outputs.static_matrix }}
       test_matrix: ${{ steps.calc-matrix.outputs.test_matrix }}
       moodle_ci_version: ${{ steps.calc-matrix.outputs.moodle_plugin_ci }}
+      has_tests: ${{ steps.config.outputs.has_tests }}
 
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+        with:
+          path: plugin
+
       - name: Read config.json
         id: config
-        uses: jaywcjlove/github-action-read-file@v2.0.0
-        with:
-          path: .github/workflows/config.json
+        run: |
+          echo "has_tests=${{ hashFiles('plugin/tests') != '' }}" >> $GITHUB_OUTPUT
+          {
+            echo "content<<EOF"
+            cat plugin/.github/workflows/config.json
+            echo
+            echo EOF
+          } >> $GITHUB_OUTPUT
 
       - name: Generate Matrices
         id: calc-matrix
@@ -114,6 +125,7 @@ jobs:
     needs:
       - setup_jobs
       - static
+    if: ${{ needs.setup_jobs.outputs.has_tests == 'true' }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.setup_jobs.outputs.test_matrix) }}
