@@ -17,6 +17,11 @@ on:
         required: false
         default: false
         type: boolean
+      allow-mustache-lint-error:
+        description: 'Whether to allow mustache lint errors'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   setup_jobs:
@@ -115,6 +120,7 @@ jobs:
       - name: Mustache Lint
         if: ${{ always() }}
         run: moodle-plugin-ci mustache
+        continue-on-error: ${{ inputs.allow-mustache-lint-error }}
 
       - name: Grunt
         if: ${{ always() }}
