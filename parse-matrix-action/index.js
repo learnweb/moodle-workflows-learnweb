@@ -27,11 +27,13 @@ try {
 
     for (const [moodle, phps] of Object.entries(moodlePhp)) {
         for (const php of phps) {
-            testmatrix.push({
-                "php": php,
-                "moodle-branch": moodle,
-                "database": mainDb
-            })
+            for (const db of dbs) {
+                testmatrix.push({
+                    "php": php,
+                    "moodle-branch": moodle,
+                    "database": db
+                })
+            }
         }
     }
 
