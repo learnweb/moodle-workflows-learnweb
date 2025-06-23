@@ -37,16 +37,6 @@ try {
         }
     }
 
-    for (const db of dbs) {
-        if (db === mainDb)
-            continue;
-        testmatrix.push({
-            "php": mainPhp,
-            "moodle-branch": mainMoodle,
-            "database": db
-        })
-    }
-
     core.setOutput("test_matrix", JSON.stringify({
         include: testmatrix
     }));
