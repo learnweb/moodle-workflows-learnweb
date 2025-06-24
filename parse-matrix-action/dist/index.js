@@ -26829,13 +26829,16 @@ try {
         "main-moodle": mainMoodle,
         "moodle-php": moodlePhp,
         "dbs": dbs,
-        "moodle-plugin-ci": moodlePluginCi
+        "moodle-plugin-ci": moodlePluginCi,
+        "additional_plugins": additionalPlugins
     } = JSON.parse(core.getInput('input'));
 
     mainDb ??= "pgsql";
     dbs ??= ["pgsql", "mariadb", "mysqli"];
+    additionalPlugins ??= [];
 
     core.setOutput("moodle_plugin_ci", moodlePluginCi);
+    core.setOutput("additional_plugins", JSON.stringify(additionalPlugins)); // Add this output
 
     core.setOutput("static_matrix", JSON.stringify({
         include: [{
@@ -26854,7 +26857,7 @@ try {
                     "php": php,
                     "moodle-branch": moodle,
                     "database": db
-                })
+                });
             }
         }
     }
