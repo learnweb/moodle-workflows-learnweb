@@ -5,7 +5,7 @@ try {
         "main-db": mainDb,
         "main-php": mainPhp,
         "main-moodle": mainMoodle,
-        "moodle-php": moodlePhp,
+        "moodle-testmatrix": moodleTestmatrix,
         "dbs": dbs,
         "moodle-plugin-ci": moodlePluginCi,
         "additional_plugins": additionalPlugins
@@ -16,7 +16,7 @@ try {
     additionalPlugins ??= [];
 
     core.setOutput("moodle_plugin_ci", moodlePluginCi);
-    core.setOutput("additional_plugins", JSON.stringify(additionalPlugins)); // Add this output
+    core.setOutput("additional_plugins", JSON.stringify(additionalPlugins));
 
     core.setOutput("static_matrix", JSON.stringify({
         include: [{
@@ -28,9 +28,12 @@ try {
 
     const testmatrix = [];
 
-    for (const [moodle, phps] of Object.entries(moodlePhp)) {
-        for (const php of phps) {
-            for (const db of dbs) {
+    for (const [moodle, config] of Object.entries(moodleTestmatrix)) {
+        const phpversions = config.php || mainPhp;
+        const databases = config.db || mainDb;
+
+        for (const php of phpversions) {
+            for (const db of databases) {
                 testmatrix.push({
                     "php": php,
                     "moodle-branch": moodle,
