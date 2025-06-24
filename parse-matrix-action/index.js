@@ -6,13 +6,12 @@ try {
         "main-php": mainPhp,
         "main-moodle": mainMoodle,
         "moodle-testmatrix": moodleTestmatrix,
-        "dbs": dbs,
         "moodle-plugin-ci": moodlePluginCi,
         "additional_plugins": additionalPlugins
     } = JSON.parse(core.getInput('input'));
 
     mainDb ??= "pgsql";
-    dbs ??= ["pgsql", "mariadb", "mysqli"];
+    moodleTestmatrix ??= {};
     additionalPlugins ??= [];
 
     core.setOutput("moodle_plugin_ci", moodlePluginCi);
@@ -28,17 +27,25 @@ try {
 
     const testmatrix = [];
 
-    for (const [moodle, config] of Object.entries(moodleTestmatrix)) {
-        const phpversions = config.php || [mainPhp];
-        const databases = config.db || [mainDb];
+    if (Object.keys(moodleTestmatrix).length === 0) {
+        testmatrix.push({
+            "php": mainPhp,
+            "moodle-branch": mainMoodle,
+            "database": mainDb
+        });
+    } else {
+        for (const [moodle, config] of Object.entries(moodleTestmatrix)) {
+            const phpversions = config.php || [mainPhp];
+            const databases = config.db || [mainDb];
 
-        for (const php of phpversions) {
-            for (const db of databases) {
-                testmatrix.push({
-                    "php": php,
-                    "moodle-branch": moodle,
-                    "database": db
-                });
+            for (const php of phpversions) {
+                for (const db of databases) {
+                    testmatrix.push({
+                        "php": php,
+                        "moodle-branch": moodle,
+                        "database": db
+                    });
+                }
             }
         }
     }

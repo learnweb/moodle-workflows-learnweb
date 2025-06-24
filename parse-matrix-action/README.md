@@ -1,4 +1,4 @@
-# Contribution
+## Contribution
 
 After making changes to `index.js`, run 
 ```
