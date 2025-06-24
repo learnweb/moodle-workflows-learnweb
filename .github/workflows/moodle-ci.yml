@@ -30,6 +30,7 @@ jobs:
       static_matrix: ${{ steps.calc-matrix.outputs.static_matrix }}
       test_matrix: ${{ steps.calc-matrix.outputs.test_matrix }}
       moodle_ci_version: ${{ steps.calc-matrix.outputs.moodle_plugin_ci }}
+      additional_plugins: ${{ steps.calc-matrix.outputs.additional_plugins }}
       has_tests: ${{ steps.config.outputs.has_tests }}
 
     steps:
@@ -83,6 +84,14 @@ jobs:
           echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
           sudo locale-gen en_AU.UTF-8
           echo "NVM_DIR=$HOME/.nvm" >> $GITHUB_ENV
+
+      - name: Install additional plugins
+        if: ${{ fromJSON(needs.setup_jobs.outputs.additional_plugins) != '[]' }}
+        run: |
+          for plugin in $(echo '${{ needs.setup_jobs.outputs.additional_plugins }}' | jq -r '.[]'); do
+            echo "Installing additional plugin: $plugin"
+            moodle-plugin-ci add-plugin $plugin
+          done
 
       - name: Install moodle-plugin-ci
         run: |
