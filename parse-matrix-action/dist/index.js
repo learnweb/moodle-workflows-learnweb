@@ -26851,8 +26851,8 @@ try {
     const testmatrix = [];
 
     for (const [moodle, config] of Object.entries(moodleTestmatrix)) {
-        const phpversions = config.php || mainPhp;
-        const databases = config.db || mainDb;
+        const phpversions = config.php || [mainPhp];
+        const databases = config.db || [mainDb];
 
         for (const php of phpversions) {
             for (const db of databases) {
