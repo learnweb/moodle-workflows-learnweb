@@ -93,7 +93,7 @@ jobs:
             moodle-plugin-ci add-plugin $plugin
           done
 
-      - name: Install moodle-plugin-ci
+      - name: Install current plugin
         run: |
           moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1 --no-init
         env:
@@ -185,7 +185,7 @@ jobs:
             moodle-plugin-ci add-plugin $plugin
           done
 
-      - name: Install moodle-plugin-ci
+      - name: Install current plugin
         run: |
           moodle-plugin-ci install --plugin ./plugin --db-host=127.0.0.1
         env:
