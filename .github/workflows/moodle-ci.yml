@@ -56,41 +56,9 @@ jobs:
         with:
           input: ${{ steps.config.outputs.content }}
 
-  sync_pull_request_template:
-    if: github.actor != 'github-actions[bot]'
-    runs-on: ubuntu-latest
-    needs: setup_jobs
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-        with:
-          path: plugin
-          fetch-depth: 0
-          ref: ${{ github.ref_name }}
-
-      - name: Download learnwebs centralized pull request template
-        run: |
-          mkdir -p plugin/.github     # Create the directory if it doesn't exist
-          curl -sSL -o plugin/.github/PULL_REQUEST_TEMPLATE.md \
-            https://raw.githubusercontent.com/learnweb/moodle-workflows-learnweb/main/templates/PULL_REQUEST_TEMPLATE.md
-
-      - name: Commit PR template if changed
-        working-directory: plugin
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .github/PULL_REQUEST_TEMPLATE.md
-          if ! git diff --cached --quiet; then
-            git commit -m "Sync with centralized pull request template"
-            git push
-          else
-            echo "No changes to commit"
-          fi
-
   static:
     needs:
       - setup_jobs
-      - sync_pull_request_template
     runs-on: ubuntu-latest
     strategy:
       matrix: ${{ fromJSON(needs.setup_jobs.outputs.static_matrix) }}
@@ -172,7 +140,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - setup_jobs
-      - sync_pull_request_template
       - static
     if: ${{ needs.setup_jobs.outputs.has_tests == 'true' }}
     strategy:
