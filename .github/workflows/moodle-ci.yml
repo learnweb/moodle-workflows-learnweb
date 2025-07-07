@@ -22,6 +22,12 @@ on:
         required: false
         default: false
         type: boolean
+      allow-grunt-error:
+        description: 'Whether to allow grunt errors'
+        required: false
+        default: false
+        type: boolean
+
 
 jobs:
   setup_jobs:
@@ -167,6 +173,7 @@ jobs:
       - name: Grunt
         if: ${{ always() }}
         run: moodle-plugin-ci grunt
+        continue-on-error: ${{ inputs.allow-grunt-error }}
 
   test:
     runs-on: ubuntu-latest
