@@ -24924,6 +24924,40 @@ exports["default"] = _default;
 
 /***/ }),
 
+/***/ 1641:
+/***/ ((module) => {
+
+function getWorkflowConfig() {
+    // LEARNWEB-TODO: add  functionality to automatically update the contents of the attributes.
+
+    return {
+        "moodle-plugin-ci": "4.5.8",
+        "main-moodle": "MOODLE_500_STABLE",
+        "main-php": "8.3",
+        "main-db": "pgsql",
+        "moodle-testmatrix": {
+            "MOODLE_401_STABLE": {
+                "php": ["8.0", "8.1"]
+            },
+            "MOODLE_404_STABLE": {
+                "php": ["8.1", "8.2", "8.3"]
+            },
+            "MOODLE_405_STABLE": {
+                "php": ["8.1", "8.2", "8.3"],
+                "db": ["pgsql", "mariadb", "mysqli"]
+            },
+            "MOODLE_500_STABLE": {
+                "php": ["8.2", "8.3", "8.4"],
+                "db": ["pgsql", "mariadb", "mysqli"]
+            }
+        }
+    };
+}
+
+module.exports = { getWorkflowConfig };
+
+/***/ }),
+
 /***/ 2613:
 /***/ ((module) => {
 
@@ -26820,42 +26854,8 @@ module.exports = parseParams
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be in strict mode.
-(() => {
-"use strict";
-
-;// CONCATENATED MODULE: ./workflow_config.js
-function getWorkflowConfig() {
-    // LEARNWEB-TODO: add  functionality to automatically update the contents of the attributes.
-
-    return {
-        "moodle-plugin-ci": "4.5.8",
-        "main-moodle": "MOODLE_500_STABLE",
-        "main-php": "8.3",
-        "main-db": "pgsql",
-        "moodle-testmatrix": {
-            "MOODLE_401_STABLE": {
-                "php": ["8.0", "8.1"]
-            },
-            "MOODLE_404_STABLE": {
-                "php": ["8.1", "8.2", "8.3"]
-            },
-            "MOODLE_405_STABLE": {
-                "php": ["8.1", "8.2", "8.3"],
-                "db": ["pgsql", "mariadb", "mysqli"]
-            },
-            "MOODLE_500_STABLE": {
-                "php": ["8.2", "8.3", "8.4"],
-                "db": ["pgsql", "mariadb", "mysqli"]
-            }
-        }
-    };
-}
-;// CONCATENATED MODULE: ./index.js
-
-const workflowConfig = getWorkflowConfig();
+const { getWorkflowConfig } = __nccwpck_require__(1641);
 const core = __nccwpck_require__(5617);
-
 
 try {
 
@@ -26866,7 +26866,7 @@ try {
         "main-php": mainPhp,
         "main-db": mainDb,
         "moodle-testmatrix": moodleTestmatrix
-    } = workflowConfig;
+    } = getWorkflowConfig();
 
     // Get the additional plugins attribute from the input. Plugins can also override the main attributes if wanted.
     let {
@@ -26930,8 +26930,6 @@ try {
 } catch (error) {
     core.setFailed(error.message);
 }
-
-})();
 
 module.exports = __webpack_exports__;
 /******/ })()

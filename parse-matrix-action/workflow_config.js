@@ -1,4 +1,4 @@
-export function getWorkflowConfig() {
+function getWorkflowConfig() {
     // LEARNWEB-TODO: add  functionality to automatically update the contents of the attributes.
 
     return {
@@ -24,3 +24,5 @@ export function getWorkflowConfig() {
         }
     };
 }
+
+module.exports = { getWorkflowConfig };

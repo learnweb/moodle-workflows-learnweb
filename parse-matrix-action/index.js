@@ -1,7 +1,5 @@
-import {getWorkflowConfig} from "./workflow_config";
-const workflowConfig = getWorkflowConfig();
+const { getWorkflowConfig } = require('./workflow_config');
 const core = require('@actions/core');
-
 
 try {
 
@@ -12,7 +10,7 @@ try {
         "main-php": mainPhp,
         "main-db": mainDb,
         "moodle-testmatrix": moodleTestmatrix
-    } = workflowConfig;
+    } = getWorkflowConfig();
 
     // Get the additional plugins attribute from the input. Plugins can also override the main attributes if wanted.
     let {
