@@ -13,42 +13,90 @@ release.
 ## How to use the repository
 
 To use the repository in a plugin no installation or cloning is required.
-In the plugin `.github/workflows/` directory three files are required:
+In the plugin `.github/workflows/` directory two files are needed:
 
-- `config.json`: The configuration file for the plugins workflow.
 - `moodle-ci.yml`: The file that calls this repository workflow to test the plugin against different.
 - `moodle-release.yml`: The file that calls the release workflow.
 
+Optional, but maybe needed;
+
+- `config.json`: Configuration file that defines workflow parameters. Needed if the plugin wants an own configuration or
+                 has additional plugins that need to be installed during the tests.
+
+---
+
+### The workflow files
+
+The `moodle-ci.yml` and `moodle-release.yml` call the workflow.
+
+The `moodle-ci.yml` is always the same. In the `with` section you can set the following parameters
+(all boolean, all set to `false` by default):
+- `allow-phpcs-warning`: If set to true, the workflow will not fail if the Code checker finds warnings.
+- `allow-phpcs-error`: If set to true, the workflow will not fail if the Code checker finds errors.
+- `allow-phpdoc-error`: If set to true, the workflow will not fail if the PHPDoc checker finds errors.
+- `allow-mustache-lint-error`: If set to true, the workflow will not fail if the Mustache linter finds errors.
+- `allow-grunt-error`: If set to true, the workflow will not fail if grunt step fails.
+
+The `moodle-ci.yml` file looks like this:
+```yaml
+name: Moodle Plugin CI
+on: [ push, pull_request ]
+
+jobs:
+  call:
+    name: ""
+    uses: learnweb/moodle-workflows-learnweb/.github/workflows/moodle-ci.yml@main
+    with:
+      allow-mustache-lint-error: true
+```
+
+The `moodle-release.yml` needs the plugin name (e.g. `mod_moodleoverflow` or `block_townsquare`):
+
+```yaml
+name: Moodle Plugin Release
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  call-moodle-release-workflow:
+    uses: learnweb/moodle-workflows-learnweb/.github/workflows/moodle-release.yml@main
+    with:
+      plugin-name: 'plugin_name'
+    secrets: inherit
+
+```
+
+---
+
 ### The configuration file
 
-The `config.json` file is crucial as it defines the plugins configuration for the workflow. The config
-file needs to define the following properties:
+The `config.json` file defines the plugins configuration for the workflow. In most cases, it's unnecessary to define as
+this workflow plugin stores a basic configuration (except the `additional_plugins` attribute) adapted to the latest
+moodle versions. The following attributes can be overwritten or defined:
 - `moodle-plugin-ci`: The version of the official [Moodle-Plugin-CI repository](https://github.com/moodlehq/moodle-plugin-ci)
-                      repository to use. Look up the tags and choose the latest version.
+  repository to use. Look up the tags and choose the latest version.
 - `main-moodle`: The main Moodle branch that the plugin is developed against. Look up the
-                 [Moodle branches](https://github.com/moodle/moodle/branches) and choose a stable version.
+  [Moodle branches](https://github.com/moodle/moodle/branches) and choose a stable version.
 - `main-php`: The main PHP version for the plugin.
 - `main-db`: The main database for the plugin. This can be `pgsql`, `mariadb` or `mysqli`.
-
-Important, but not clearly necessary is:
 - `moodle-testmatrix`: The Moodle test matrix. The test matrix defines different Moodle versions, php versions and databases
-                       that the plugin should be tested against the PHPUnit and Behat tests. If not defined, the workflow will
-                       only use the main-moodle, main-php and main-db properties. If the plugin wants to support multiple
-                       Moodle versions, the test matrix should be defined.
-
-Optional property:
+  that the plugin should be tested against the PHPUnit and Behat tests. If not defined, the workflow will
+  only use the main-moodle, main-php and main-db properties. If the plugin wants to support multiple
+  Moodle versions, the test matrix should be defined.
 - `additional_plugins`: An array of additional plugins. When plugins depend on other plugins, this property can be used to
-                        define the additional plugins that should be installed during the tests, as otherwise the workflow
-                        fails
+  define the additional plugins that should be installed during the tests, as otherwise the workflow
+  fails. Set this if your plugin depends on other plugins that are not part of the Moodle core.
 
-A example config file with different options for the testmatrix looks like the example under (remove the `//` comments before
+An example config file with different options for the testmatrix looks like the example under (remove the `//` comments before
 using it). Check on the [Moodle Releases](https://moodledev.io/general/releases) which Moodle versions are supported and check on
 [Moodle PHP versions](https://moodledev.io/general/development/policies/php) which PHP versions are supported for each Moodle version.
 Then choose which tests you want to include:
 
 ```json
 {
-  "moodle-plugin-ci": "4.5.7",
+  "moodle-plugin-ci": "4.5.8",
   "main-moodle": "MOODLE_500_STABLE",
   "main-php": "8.3",
   "main-db": "pgsql",
@@ -73,39 +121,4 @@ Then choose which tests you want to include:
     "moodlehq/moodle-local_codechecker"
   ]
 }
-
-```
-
-### The workflow files
-
-The `moodle-ci.yml` and `moodle-release.yml` call the workflow. The `moodle-ci.yml` is always the same:
-
-```yaml
-name: Moodle Plugin CI
-on: [ push, pull_request ]
-
-jobs:
-  call:
-    name: ""
-    uses: learnweb/moodle-workflows-learnweb/.github/workflows/moodle-ci.yml@main
-    with:
-      allow-mustache-lint-error: true
-```
-
-The `moodle-release.yml` needs the plugin name (e.g. 'mod_moodleoverflow' or `block_townsquare`):
-
-```yaml
-name: Moodle Plugin Release
-
-on:
-  release:
-    types: [ published ]
-
-jobs:
-  call-moodle-release-workflow:
-    uses: learnweb/moodle-workflows-learnweb/.github/workflows/moodle-release.yml@main
-    with:
-      plugin-name: 'plugin_name'
-    secrets: inherit
-
 ```
