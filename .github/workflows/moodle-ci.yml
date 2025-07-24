@@ -49,12 +49,16 @@ jobs:
         id: config
         run: |
           echo "has_tests=${{ hashFiles('plugin/tests') != '' }}" >> $GITHUB_OUTPUT
+          if [ -f "plugin/.github/workflows/config.json" ]; then
           {
             echo "content<<EOF"
             cat plugin/.github/workflows/config.json
             echo
             echo EOF
           } >> $GITHUB_OUTPUT
+          else
+          echo "content=" >> $GITHUB_OUTPUT
+          fi
 
       - name: Generate Matrices
         id: calc-matrix
