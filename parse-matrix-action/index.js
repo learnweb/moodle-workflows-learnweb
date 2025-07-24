@@ -1,19 +1,38 @@
+import {getWorkflowConfig} from "./workflow_config";
+const workflowConfig = getWorkflowConfig();
 const core = require('@actions/core');
 
+
 try {
+
+    // Get basic configurations.
     let {
-        "main-db": mainDb,
-        "main-php": mainPhp,
-        "main-moodle": mainMoodle,
-        "moodle-testmatrix": moodleTestmatrix,
         "moodle-plugin-ci": moodlePluginCi,
-        "additional_plugins": additionalPlugins
+        "main-moodle": mainMoodle,
+        "main-php": mainPhp,
+        "main-db": mainDb,
+        "moodle-testmatrix": moodleTestmatrix
+    } = workflowConfig;
+
+    // Get the additional plugins attribute from the input. Plugins can also override the main attributes if wanted.
+    let {
+        "additional_plugins": additionalPlugins,
+        "moodle-plugin-ci": pluginMoodlePluginCi,
+        "main-moodle": pluginMainMoodle,
+        "main-php": pluginMainPhp,
+        "main-db": pluginMainDb,
+        "moodle-testmatrix": pluginMoodleTestmatrix
     } = JSON.parse(core.getInput('input'));
 
-    mainDb ??= "pgsql";
-    moodleTestmatrix ??= {};
-    additionalPlugins ??= [];
+    // Override the main attributes with the plugin attributes if they are set.
+    moodlePluginCi = pluginMoodlePluginCi || moodlePluginCi;
+    mainMoodle = pluginMainMoodle || mainMoodle;
+    mainPhp = pluginMainPhp || mainPhp;
+    mainDb = pluginMainDb || mainDb;
+    moodleTestmatrix = pluginMoodleTestmatrix || moodleTestmatrix;
+    additionalPlugins = additionalPlugins || [];
 
+    // Set the outputs for the action.
     core.setOutput("moodle_plugin_ci", moodlePluginCi);
     core.setOutput("additional_plugins", JSON.stringify(additionalPlugins));
 
