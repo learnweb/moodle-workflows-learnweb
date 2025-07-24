@@ -32,6 +32,10 @@ try {
         moodleTestmatrix = pluginMoodleTestmatrix || moodleTestmatrix;
         additionalPlugins = additionalPlugins || [];
         core.setOutput("additional_plugins", JSON.stringify(additionalPlugins));
+    } else {
+        // As this attribute is required, we set it to an empty array if not provided.
+        const additionalPlugins = [];
+        core.setOutput("additional_plugins", JSON.stringify(additionalPlugins));
     }
 
     // Set the outputs for the action.
