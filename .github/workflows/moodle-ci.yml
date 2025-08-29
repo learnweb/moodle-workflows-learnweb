@@ -91,8 +91,11 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .github/PULL_REQUEST_TEMPLATE.md
           if ! git diff --cached --quiet; then
+            branch="sync/templates-$(date +%s)"
+            git checkout -b "$branch"
             git commit -m "Sync with Learnweb's centralized pull request template"
-            git push
+            git push -u origin "$branch"
+            gh pr create --base "${GITHUB_REF##*/}" --head "$branch" --title "Update templates from Learnweb workflow repository" --body
           else
             echo "No changes to commit"
           fi
