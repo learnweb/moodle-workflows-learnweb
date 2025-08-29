@@ -98,6 +98,7 @@ jobs:
             git commit -m "Sync with Learnweb's centralized pull request template"
             git push -u origin "$branch"
             echo "Creating PR from branch $branch to ${GITHUB_REF##*/}"
+            echo ${{ github.head_ref || github.ref_name }}
             gh pr create --base "${GITHUB_REF##*/}" --head "$branch" --title "Update templates from Learnweb workflow repository" --body "" || echo "PR creation skipped - no changes or branch issues"
           else
             echo "No changes to commit"
