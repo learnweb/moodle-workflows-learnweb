@@ -95,7 +95,7 @@ jobs:
             git checkout -b "$branch"
             git commit -m "Sync with Learnweb's centralized pull request template"
             git push -u origin "$branch"
-            gh pr create --base "${GITHUB_REF##*/}" --head "$branch" --title "Update templates from Learnweb workflow repository" --body
+            gh pr create --base "${GITHUB_REF##*/}" --head "$branch" --title "Update templates from Learnweb workflow repository" --body ""
           else
             echo "No changes to commit"
           fi
