@@ -94,12 +94,19 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .github/PULL_REQUEST_TEMPLATE.md
           if ! git diff --cached --quiet; then
-            branch="sync/templates-$(date +%s)"
-            git checkout -b "$branch"
-            git commit -m "Sync with Learnweb's centralized pull request template"
-            git push -u origin "$branch"
-            echo "Creating PR from branch $branch to $TARGET_BRANCH"
-            gh pr create --base "$TARGET_BRANCH" --head "$branch" --title "Update templates from Learnweb workflow repository" --body "" || echo "PR creation skipped - no changes or branch issues"
+            # Check if PR already exists
+            existing_pr=$(gh pr list --base "$TARGET_BRANCH" --head "*:sync/templates-*" --state open --json number,title --jq '.[] | select(.title == "Update templates from Learnweb workflow repository") | .number')
+
+            if [ -n "$existing_pr" ]; then
+              echo "PR #$existing_pr already exists for template updates on branch $TARGET_BRANCH"
+            else
+              branch="sync/templates-$(date +%s)"
+              git checkout -b "$branch"
+              git commit -m "Sync with Learnweb's centralized pull request template"
+              git push -u origin "$branch"
+              echo "Creating PR from branch $branch to $TARGET_BRANCH"
+              gh pr create --base "$TARGET_BRANCH" --head "$branch" --title "Update templates from Learnweb workflow repository" --body "" || echo "PR creation skipped - no changes or branch issues"
+            fi
           else
             echo "No changes to commit"
           fi
