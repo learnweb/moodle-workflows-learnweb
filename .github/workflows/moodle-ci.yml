@@ -90,8 +90,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           TARGET_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
+          # Configure github bot
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config commit.gpgsign true
+          git config gpg.format ssh
+          git config user.signingkey "${{ github.token }}"
+
           git add .github/PULL_REQUEST_TEMPLATE.md
           if ! git diff --cached --quiet; then
             # Check if PR already exists
