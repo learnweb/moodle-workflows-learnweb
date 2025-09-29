@@ -98,7 +98,7 @@ jobs:
             existing_pr=$(gh pr list --base "$TARGET_BRANCH" --search "Update templates from Learnweb workflow repository")
 
             if [ -n "$existing_pr" ]; then
-              echo "PR #$existing_pr already exists for template updates on branch $TARGET_BRANCH"
+              echo "There already exists a pull request on branch $TARGET_BRANCH. Please merge it first."
             else
               branch="sync/templates-$(date +%s)"
               git checkout -b "$branch"
