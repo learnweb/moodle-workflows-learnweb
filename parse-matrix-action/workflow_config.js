@@ -2,7 +2,7 @@ function getWorkflowConfig() {
     // LEARNWEB-TODO: add  functionality to automatically update the contents of the attributes.
 
     return {
-        "moodle-plugin-ci": "4.5.8",
+        "moodle-plugin-ci": "4.5.9",
         "main-moodle": "MOODLE_500_STABLE",
         "main-php": "8.3",
         "main-db": "pgsql",
@@ -24,5 +24,6 @@ function getWorkflowConfig() {
         }
     };
 }
+
 
 module.exports = { getWorkflowConfig };
