@@ -3,7 +3,7 @@ function getWorkflowConfig() {
 
     return {
         "moodle-plugin-ci": "4.5.9",
-        "main-moodle": "MOODLE_500_STABLE",
+        "main-moodle": "MOODLE_501_STABLE",
         "main-php": "8.3",
         "main-db": "pgsql",
         "moodle-testmatrix": {
