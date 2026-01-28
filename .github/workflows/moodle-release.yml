@@ -26,8 +26,8 @@ jobs:
       PLUGIN: ${{ inputs.plugin-name }}
       CURL: curl -s
       ENDPOINT: https://moodle.org/webservice/rest/server.php
-      TOKEN: ${{ secrets.MOODLE_ORG_TOKEN }}
-      FUNCTION: local_plugins_add_version
+      TOKEN: ${{ secrets.MOODLE_ORG_2026 }}
+      FUNCTION: plugins_maintenance
 
     steps:
       - name: Call the service function
