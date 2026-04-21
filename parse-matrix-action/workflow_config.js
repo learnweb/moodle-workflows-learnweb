@@ -12,16 +12,18 @@ function getWorkflowConfig() {
             },
             "MOODLE_500_STABLE": {
                 "php": ["8.2", "8.3", "8.4"],
-                "db": ["pgsql", "mariadb", "mysqli"]
             },
             "MOODLE_501_STABLE": {
                 "php": ["8.2", "8.3", "8.4"],
+                "db": ["pgsql", "mariadb", "mysqli"]
+            },
+            "MOODLE_502_STABLE": {
+                "php": ["8.3", "8.4"],
                 "db": ["pgsql", "mariadb", "mysqli"]
             }
         }
     };
 }
-
 
 module.exports = { getWorkflowConfig };
 

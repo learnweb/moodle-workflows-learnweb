@@ -116,8 +116,8 @@ Then choose which tests you want to include:
     }
   },
   "additional_plugins": [ // How to include additional plugins. The plugin is the github repository url.
-    "learnweb/moodle-mod_moodleoverflow",
-    "learnweb/moodle-block_townsquare",
+    "learnweb/moodle-mod_moodleoverflow", // Use the main branch
+    "--branch BRANCHNAME learnweb/moodle-block_townsquare", // Use a custom branch
     "moodlehq/moodle-local_codechecker"
   ]
 }
