@@ -2,8 +2,8 @@ function getWorkflowConfig() {
     // LEARNWEB-TODO: add  functionality to automatically update the contents of the attributes.
 
     return {
-        "moodle-plugin-ci": "4.5.10",
-        "main-moodle": "MOODLE_501_STABLE",
+        "moodle-plugin-ci": "4.5.11",
+        "main-moodle": "MOODLE_502_STABLE",
         "main-php": "8.3",
         "main-db": "pgsql",
         "moodle-testmatrix": {
