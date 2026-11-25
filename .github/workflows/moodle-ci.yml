@@ -35,9 +35,9 @@ jobs:
     outputs:
       static_matrix: ${{ steps.calc-matrix.outputs.static_matrix }}
       test_matrix: ${{ steps.calc-matrix.outputs.test_matrix }}
-      moodle_ci_version: ${{ steps.calc-matrix.outputs.moodle_plugin_ci }}
+      moodle_ci_version: ${{ steps.calc-matrix.outputs.moodle_ci_version }}
       additional_plugins: ${{ steps.calc-matrix.outputs.additional_plugins }}
-      has_tests: ${{ steps.config.outputs.has_tests }}
+      has_tests: ${{ steps.calc-matrix.outputs.has_tests }}
 
     steps:
       - name: Check out repository code
@@ -45,26 +45,27 @@ jobs:
         with:
           path: plugin
 
-      - name: Read config.json
-        id: config
-        run: |
-          echo "has_tests=${{ hashFiles('plugin/tests') != '' }}" >> $GITHUB_OUTPUT
-          if [ -f "plugin/.github/workflows/config.json" ]; then
-          {
-            echo "content<<EOF"
-            cat plugin/.github/workflows/config.json
-            echo
-            echo EOF
-          } >> $GITHUB_OUTPUT
-          else
-          echo "content=" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Generate Matrices
+      - name: Generate matrices
         id: calc-matrix
-        uses: learnweb/moodle-workflows-learnweb/parse-matrix-action@main
-        with:
-          input: ${{ steps.config.outputs.content }}
+        run: |
+          set -o pipefail
+          echo "has_tests=${{ hashFiles('plugin/tests') != '' }}" >> "$GITHUB_OUTPUT"
+          defaults=$(curl -fsSL https://raw.githubusercontent.com/learnweb/moodle-workflows-learnweb/main/defaults.json)
+          pluginconfig=$(cat plugin/.github/workflows/config.json 2>/dev/null || echo '{}')
+
+          jq -n -r --argjson defaults "$defaults" --argjson plugin "$pluginconfig" '
+            ($defaults + $plugin) as $config
+            | {"php": $config["main-php"], "moodle-branch": $config["main-moodle"], "database": $config["main-db"]} as $main
+            | "moodle_ci_version=\($config["moodle-plugin-ci"])",
+              "additional_plugins=\($config["additional_plugins"] | tojson)",
+              "static_matrix=\({"include": [$main]} | tojson)",
+              "test_matrix=\({"include": [
+                  $config["moodle-testmatrix"] | to_entries[] | .["key"] as $branch
+                  | (.["value"]["php"] // [$main["php"]])[] as $php
+                  | (.["value"]["db"] // [$main["database"]])[] as $db
+                  | {"php": $php, "moodle-branch": $branch, "database": $db}
+                ]} | tojson)"
+          ' | tee -a "$GITHUB_OUTPUT"
 
   sync_pull_request_template:
     if: github.actor != 'github-actions[bot]' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
