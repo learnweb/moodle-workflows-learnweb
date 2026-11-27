@@ -256,6 +256,24 @@ jobs:
         if: ${{ always() }}
         run: moodle-plugin-ci phpunit
 
+      - name: PHPUnit tests for subplugins
+        if: ${{ !cancelled() && hashFiles('plugin/db/subplugins.json') != '' }}
+        run: |
+          failures=()
+          for base in $(jq -r '.subplugintypes // {} | .[]' ./plugin/db/subplugins.json); do
+            [ -d "./plugin/$base" ] || continue
+            for dir in "./plugin/$base"/*/; do
+              dir="${dir%/}"
+              [ -d "$dir/tests" ] || continue
+              echo "::group::PHPUnit for $dir"
+              if moodle-plugin-ci phpunit "$dir"; then echo "OK: $dir"; else failures+=("$dir (rc=$?)"); fi
+              echo "::endgroup::"
+            done
+          done
+          if [ ${#failures[@]} -ne 0 ]; then
+            echo "PHPUnit failed for:"; printf '  %s\n' "${failures[@]}"; exit 1
+          fi
+
       - name: Behat features
         if: ${{ always() }}
         run: moodle-plugin-ci behat --profile chrome --auto-rerun 0
